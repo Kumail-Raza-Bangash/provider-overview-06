@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider_overview_06/model/babies.dart';
 import 'package:provider_overview_06/model/dogs.dart';
 
 void main() {
@@ -12,8 +13,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Dog>(
-      create: (context) => Dog(name: 'dog5', breed: 'breed05'),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Dog>(
+          create: (context) => Dog(name: 'dog06', breed: 'breed06', age: 6),
+          ),
+          FutureProvider<int>(initialData: 0, create: (context){
+            final int dogAge = context.read().age;
+            final babies = Babies(age: dogAge);
+            return babies.getBabies();
+          } 
+          ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Provider Overview 05',
@@ -41,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Provider 05'),
+        title: const Text('Provider 06'),
       ),
       body:  Center(
         child: Column(
@@ -87,6 +98,8 @@ class Age extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
              Text('- age: ${context.select<Dog, int>((Dog dog) => dog.age)}', style: const TextStyle(fontSize: 20.0,),),
+             const SizedBox(height: 20.0,),
+             Text('number of babies: ${context.watch<int>()}', style:  TextStyle(fontSize: 20.0,),),
              const SizedBox(height: 20.0,),
               ElevatedButton(onPressed: () => context.read<Dog>().grow(), 
               child: const Text('Grow', style:  TextStyle(fontSize: 20.0,),),),
